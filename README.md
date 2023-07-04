@@ -181,9 +181,214 @@ The functions in `itertools` can be broadly classified into three categories:
 
 1. **Infinite Iterators:** `count`, `cycle`, `repeat` These functions return infinite iterators. For example, `count(10)` returns an iterator that generates consecutive integers starting at 10, `cycle('ABCD')` returns an iterator that repeats the sequence 'ABCD' infinitely.
     
+ ```python
+import itertools
+
+# count(start, step)
+counter = itertools.count(start=10, step=5)
+for i in range(5):
+    print(next(counter))  # Prints: 10, 15, 20, 25, 30
+```
+   
 2. **Iterators terminating on the shortest input sequence:** `accumulate`, `chain`, `groupby`, `islice`, `starmap`, `tee`, `zip_longest`, etc. These functions create an iterator that returns elements from the input iterable(s) in a specific pattern. For example, `zip_longest('ABCD', 'xy', fillvalue='-')` returns an iterator that generates the tuples ('A', 'x'), ('B', 'y'), ('C', '-'), ('D', '-').
+
+```python
+import itertools
+
+# chain(*iterables)
+# This function takes several iterables and returns a single iterator that produces the contents of all of them as though they were a single sequence
+result = itertools.chain("ABC", "DEF")
+for letter in result:
+    print(letter)  # Prints: 'A', 'B', 'C', 'D', 'E', 'F'
+```
     
 3. **Combinatoric generators:** `combinations`, `combinations_with_replacement`, `permutations`, `product` These functions return iterators that generate all possible combinations or permutations of the input iterable(s). For example, `combinations('ABCD', 2)` generates all 2-element combinations of 'ABCD'.
-    
 
+```python
+import itertools
+
+# permutations(iterable, r=None)
+# This function returns successive r-length permutations of elements in the iterable where r is the length of each permutation.
+result = itertools.permutations("AB", 2)
+for item in result:
+    print(item)  # Prints: ('A', 'B'), ('B', 'A')
+```
+    
 Overall, `itertools` provides a set of powerful tools for creating and working with iterators, making it easier to write efficient code for handling sequences and other iterable objects.
+
+## Cycle
+
+The `itertools.cycle` function in Python returns an iterator that produces elements from the iterable you give it, and saves a copy of the iterable. When the iterable is exhausted, it "cycles" back to the beginning and starts producing elements again. This makes it useful for creating infinite iterators.
+
+Here's a basic example:
+
+```python
+import itertools
+
+counter = itertools.cycle('ABC')
+for _ in range(10):
+    print(next(counter))
+```
+
+In this example, `itertools.cycle` is given a string `'ABC'`. It produces an iterator that generates the characters `'A'`, `'B'`, `'C'`, `'A'`, `'B'`, `'C'`, and so on, repeating the sequence indefinitely. The loop in this example only runs 10 times, so it only prints the first 10 elements of the cycle: `'A'`, `'B'`, `'C'`, `'A'`, `'B'`, `'C'`, `'A'`, `'B'`, `'C'`, `'A'`.
+
+It's important to note that `itertools.cycle` does not make a copy of the input iterable, so it can be used with large or infinite iterables without using a lot of memory. However, because it repeats indefinitely, you should be careful to ensure that your program doesn't enter an infinite loop when using it.
+
+## Repeat
+
+The `itertools.repeat` function in Python's itertools module returns an iterator that produces the same value over and over again, indefinitely. If a second parameter, `times`, is given, it will produce the value that number of times, otherwise it will repeat indefinitely.
+
+Here's an example:
+
+```python
+import itertools
+
+# Repeat the number 5 three times
+for number in itertools.repeat(5, 3):
+    print(number)  # Prints: 5, 5, 5
+```
+
+In this example, `itertools.repeat` is given the number 5 and the number 3. It returns an iterator that produces the number 5, three times.
+
+Here is an example where `itertools.repeat` is used without the `times` parameter:
+
+```python
+import itertools
+
+repeat_10 = itertools.repeat(10)
+for _ in range(5):
+    print(next(repeat_10))  # Prints: 10, 10, 10, 10, 10
+```
+
+In this example, `itertools.repeat` is given only the number 10. It returns an iterator that produces the number 10 indefinitely. The loop in this example only runs 5 times, so it only prints the number 10, five times.
+
+Keep in mind that if the `times` parameter is not provided, `itertools.repeat` will return an infinite iterator. So be careful to ensure that your program doesn't enter an infinite loop when using it.
+
+## Accumulate
+
+The `itertools.accumulate` function in Python is part of the itertools module. It makes an iterator that returns the results of a function which is applied to a sequence of pairwise elements. If the input iterable is empty, the output iterable will also be empty.
+
+By default, the function is operator.add (which performs addition). If no function is specified, it computes the accumulated sum of the elements. If a function is provided, it must be a function of two arguments.
+
+Here's an example with the default behavior:
+
+```python
+import itertools
+
+numbers = [1, 2, 3, 4, 5]
+result = itertools.accumulate(numbers)
+
+for num in result:
+    print(num)
+# Output: 1, 3, 6, 10, 15
+```
+
+In this example, `accumulate` computes the running total of the numbers in the list. The output is the sequence of partial sums: 1, 1+2=3, 1+2+3=6, 1+2+3+4=10, 1+2+3+4+5=15.
+
+You can also provide a function to `accumulate`. Here's an example with multiplication:
+
+```python
+import itertools
+import operator
+
+numbers = [1, 2, 3, 4, 5]
+result = itertools.accumulate(numbers, operator.mul)
+
+for num in result:
+    print(num)
+# Output: 1, 2, 6, 24, 120
+```
+
+In this example, `accumulate` computes the running product of the numbers in the list using the `operator.mul` function. The output is the sequence of partial products: 1, 1_2=2, 1_2_3=6, 1_2_3_4=24, 1_2_3_4_5=120.
+
+## Product
+
+The `itertools.product` function in Python's itertools module is essentially the equivalent of nested for-loops. It computes the Cartesian product of the input iterables. This results in all possible pairs of elements if given two lists, all possible triples if given three lists, and so forth.
+
+Here is a simple example with two lists:
+
+```python
+import itertools
+
+for pair in itertools.product([1, 2, 3], ['a', 'b']):
+    print(pair)
+# Output: (1, 'a'), (1, 'b'), (2, 'a'), (2, 'b'), (3, 'a'), (3, 'b')
+```
+
+In this example, `itertools.product` generates all pairs of numbers and letters.
+
+`itertools.product` can also generate all possible combinations with replacement from a single iterable. Here's an example:
+
+```python
+import itertools
+
+for pair in itertools.product('AB', repeat=2):
+    print(pair)
+# Output: ('A', 'A'), ('A', 'B'), ('B', 'A'), ('B', 'B')
+```
+
+In this example, the `repeat=2` argument tells `product` to generate all pairs of elements from the string 'AB', including pairs where the elements are the same.
+
+`itertools.product` can be very useful for generating all possible combinations of values for testing, solving combinatorial problems, and more.
+
+## Permutations
+
+The `itertools.permutations` function in Python's itertools module returns successive r length permutations of elements in the iterable.
+
+A permutation is an arrangement of objects in a specific order. The order of arrangement of the object is very crucial. The number of permutations on a set of n elements is given by n!.
+
+Here is a simple example:
+
+```python
+import itertools
+
+for p in itertools.permutations('ABC', 2):
+    print(p)
+# Output: ('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'C'), ('C', 'A'), ('C', 'B')
+```
+
+In this example, `itertools.permutations` generates all pairs of letters from the string 'ABC', with the order of the letters taken into account. So ('A', 'B') and ('B', 'A') are considered to be different permutations.
+
+If no length is provided, then `itertools.permutations` defaults to the length of the iterable. Here's an example:
+
+```python
+import itertools
+
+for p in itertools.permutations('ABC'):
+    print(p)
+# Output: ('A', 'B', 'C'), ('A', 'C', 'B'), ('B', 'A', 'C'), ('B', 'C', 'A'), ('C', 'A', 'B'), ('C', 'B', 'A')
+```
+
+In this example, `itertools.permutations` generates all permutations of the string 'ABC'. The output includes all possible ways of ordering the three letters.
+
+`itertools.permutations` is useful in scenarios where you want to generate all possible arrangements of elements, such as in certain types of problems in combinatorics or in testing.
+
+## Combinations
+
+The `itertools.combinations` function in Python's itertools module returns successive r-length combinations of elements in the iterable. Combinations are emitted in lexicographic sort order, so if the input iterable is sorted, the combination tuples will be produced in sorted order.
+
+A combination is a selection of items where the order does not matter. This is in contrast to permutations, where the order of the items does matter.
+
+Here's an example of using `itertools.combinations`:
+
+```python
+import itertools
+
+for c in itertools.combinations('ABC', 2):
+    print(c)
+# Output: ('A', 'B'), ('A', 'C'), ('B', 'C')
+```
+
+In this example, `itertools.combinations` generates all pairs of letters from the string 'ABC', with the order of the letters not taken into account. So ('A', 'B') and ('B', 'A') are considered to be the same combination and only ('A', 'B') is generated.
+
+If you need to generate all combinations including those with repeated elements, you can use the `itertools.combinations_with_replacement` function:
+
+```python
+import itertools
+
+for c in itertools.combinations_with_replacement('ABC', 2):
+    print(c)
+# Output: ('A', 'A'), ('A', 'B'), ('A', 'C'), ('B', 'B'), ('B', 'C'), ('C', 'C')
+```
+
+`itertools.combinations` and `itertools.combinations_with_replacement` can be useful in scenarios where you need to generate all possible selections of elements, such as in certain types of problems in combinatorics or in testing.
