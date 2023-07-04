@@ -1,13 +1,11 @@
-def count(start, setp=1):
-    count = start
+def count(first, step=1):
     while True:
-        yield count
-        count += setp
+        yield first
+        first += step
 
-counter = count(1)
-print(next(counter)) # 1
-print(next(counter)) # 2
-print(next(counter)) # 3
-
-for val in counter:
-    print(val)
+if __name__ == "__main__":
+    counter = count(10)
+    print(next(counter))
+    print(next(counter))
+    for val in counter:
+        print(val)
