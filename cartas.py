@@ -1,5 +1,3 @@
-
-
 naipes = ['Paus', 'Ouros', 'Copas', 'Espadas']
 valores = list(range(2,11)) + ['J', 'Q', 'K', 'A']
 
