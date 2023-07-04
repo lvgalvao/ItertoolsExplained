@@ -1,7 +1,8 @@
 import operator
+from itertools import accumulate
 from functools import reduce
 
-def accumulate(iterable, func=operator.add, *, initial=None):
+def custom_accumulate(iterable, func=operator.add, *, initial=None):
     'Return running totals'
     # accumulate([1,2,3,4,5]) --> 1 3 6 10 15
     # accumulate([1,2,3,4,5], initial=100) --> 100 101 103 106 110 115
@@ -20,8 +21,9 @@ def accumulate(iterable, func=operator.add, *, initial=None):
         yield total
 
 if __name__ == '__main__':
+    print(list(custom_accumulate([1,2,3,4,5]))) # [1, 3, 6, 10, 15]
     print(list(accumulate([1,2,3,4,5]))) # [1, 3, 6, 10, 15]
-    print(reduce(operator.add, accumulate([1,2,3,4,5]))) # 35
+    print(reduce(operator.add, custom_accumulate([1,2,3,4,5]))) # 35
 
-    print(list(accumulate([1,2,3,4,5], initial=100)))
-    print(list(accumulate([1,2,3,4,5], operator.mul)))
+    print(list(custom_accumulate([1,2,3,4,5], initial=100)))
+    print(list(custom_accumulate([1,2,3,4,5], operator.mul)))
